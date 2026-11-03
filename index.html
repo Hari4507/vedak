@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f7f5" />
+  <meta name="description" content="Project Vedhak — an ESP32-based Wi-Fi Channel State Information acquisition and exploratory visualization prototype for human-presence sensing." />
+  <title>Project Vedhak — Wi-Fi CSI Sensing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Project Vedhak home"><span class="brand-mark">V</span><span>PROJECT <b>VEDHAK</b></span></a>
+    <nav class="nav" id="nav">
+      <a href="#challenge">Challenge</a><a href="#architecture">Architecture</a><a href="#maths">Maths</a><a href="#results">Results</a>
+    </nav>
+    <div class="top-actions"><button class="icon-btn" id="presentBtn" title="Presentation mode (P)"><span>↗</span><span class="present-label">Present</span></button><button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button></div>
+  </header>
+
+  <main>
+    <section class="hero section" id="home">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="pulse-dot"></span> IOT RESEARCH PROJECT <span class="eyebrow-line"></span> 2026—27</div>
+        <h1>See through<br><em>the signal.</em></h1>
+        <p class="hero-lede">Exploring how Wi-Fi Channel State Information responds to changes in the space between transmitter and receiver.</p>
+        <div class="hero-buttons"><a class="button button-dark" href="#challenge">Explore the project <span>↓</span></a><a class="button button-light" href="docs/research-paper.pdf" target="_blank" rel="noopener">Read research paper <span>↗</span></a></div>
+        <div class="hero-meta"><div><span class="meta-label">AUTHORS</span><strong>U. Hari Charan · Panav Payappagoudar · S. Zigneswar</strong></div><div><span class="meta-label">INSTITUTION</span><strong>VIT-AP University · SCOPE</strong></div></div>
+      </div>
+      <div class="hero-art reveal">
+        <div class="art-top"><span>01 / WIRELESS SENSING FIELD</span><span>WI-FI CSI · CHANNEL 11*</span></div>
+        <div class="signal-visual field-visual">
+          <div class="field-grid"></div>
+          <svg class="field-svg" viewBox="0 0 900 540" role="img" aria-label="Animated Wi-Fi sensing illustration: transmitter on the left, a person in the middle and two receivers on the right">
+            <defs>
+              <radialGradient id="fieldGlow"><stop offset="0" stop-color="#dce4ee" stop-opacity=".12"/><stop offset="1" stop-color="#dce4ee" stop-opacity="0"/></radialGradient>
+              <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#9ca8b8" stop-opacity=".08"/><stop offset=".5" stop-color="#e8edf5" stop-opacity=".8"/><stop offset="1" stop-color="#9ca8b8" stop-opacity=".08"/></linearGradient>
+            </defs>
+            <ellipse cx="450" cy="270" rx="330" ry="170" fill="url(#fieldGlow)"/>
+            <g class="field-orbits" fill="none" stroke="#aab5c5" stroke-width="1.3">
+              <ellipse cx="450" cy="270" rx="330" ry="112" transform="rotate(-15 450 270)"/>
+              <ellipse cx="450" cy="270" rx="250" ry="82" transform="rotate(-15 450 270)"/>
+              <ellipse cx="450" cy="270" rx="165" ry="53" transform="rotate(-15 450 270)"/>
+              <path d="M450 25V515" opacity=".22"/><path d="M90 270H810" opacity=".12"/>
+            </g>
+            <g class="field-rays" fill="none" stroke="url(#beam)" stroke-width="1.6">
+              <path d="M115 270 C260 270 300 270 450 270 S660 170 790 170"/>
+              <path d="M115 270 C260 270 300 270 450 270 S660 370 790 370" opacity=".7"/>
+            </g>
+            <g class="signal-pulses">
+              <circle r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M115 270 C260 270 300 270 450 270 S660 170 790 170"/></circle>
+              <circle r="4"><animateMotion dur="3.2s" begin="1.1s" repeatCount="indefinite" path="M115 270 C260 270 300 270 450 270 S660 370 790 370"/></circle>
+              <circle r="3"><animateMotion dur="3.2s" begin="2.1s" repeatCount="indefinite" path="M115 270 C260 270 300 270 450 270 S660 170 790 170"/></circle>
+            </g>
+            <g class="person-figure" stroke="#d6dde8" stroke-width="2.2" fill="none" stroke-linecap="round">
+              <circle cx="450" cy="205" r="16"/><path d="M450 222V300 M450 235L425 270 M450 235L475 270 M450 300L428 340 M450 300L472 340"/>
+            </g>
+            <g class="node node-tx"><circle cx="115" cy="270" r="31"/><text x="115" y="276" text-anchor="middle">TX</text></g>
+            <g class="node node-rx"><circle cx="790" cy="170" r="31"/><text x="790" y="176" text-anchor="middle">RX</text></g>
+            <g class="node node-rx"><circle cx="790" cy="370" r="31"/><text x="790" y="376" text-anchor="middle">RX</text></g>
+            <g class="field-captions"><text x="115" y="326" text-anchor="middle">TRANSMITTER</text><text x="450" y="390" text-anchor="middle">HUMAN-CHANNEL INTERACTION</text><text x="790" y="426" text-anchor="middle">RECEIVERS</text></g>
+          </svg>
+          <div class="field-caption"><span>TRANSMIT</span><span>PROPAGATION + REFLECTION</span><span>RECEIVE</span></div>
+        </div>
+        <div class="art-bottom"><span>CHANNEL STATE INFORMATION</span><span class="art-index">V / 001</span></div>
+      </div>
+      <div class="hero-scroll">SCROLL TO EXPLORE <span>↓</span></div>
+    </section>
+
+    <section class="intro-strip"><p>A person is not the only thing that changes a radio channel. The challenge is to separate meaningful movement from ordinary environmental variation.</p><span>01 — THE CHALLENGE</span></section>
+
+    <section class="section challenge-section" id="challenge">
+      <div class="section-head"><div><div class="eyebrow">01 / THE SENSING IDEA</div><h2>One wireless link.<br><em>Many influences.</em></h2></div><p class="section-summary">Wi-Fi CSI provides channel measurements across subcarriers. Those measurements can shift as signals travel through a space, reflect from surfaces and encounter moving objects.</p></div>
+      <div class="challenge-grid">
+        <article class="challenge-card"><span class="card-number">A / 01</span><div class="challenge-visual wave-one"><i></i><i></i><i></i></div><h3>Propagation</h3><p>The transmitted signal reaches the receiver through a combination of paths, not just one straight line.</p><span class="card-foot">MULTIPATH CHANNEL</span></article>
+        <article class="challenge-card dark-card"><span class="card-number">B / 02</span><div class="challenge-visual wave-two"><i></i><i></i><i></i></div><h3>Interaction</h3><p>Movement in the environment can alter the received channel pattern over time.</p><span class="card-foot">TIME-VARYING RESPONSE</span></article>
+        <article class="challenge-card"><span class="card-number">C / 03</span><div class="challenge-visual wave-three"><i></i><i></i><i></i></div><h3>Interpretation</h3><p>Interference, device placement and static objects can also change measurements, so controlled experiments matter.</p><span class="card-foot">ROBUST VALIDATION</span></article>
+      </div>
+      <div class="challenge-note"><span class="note-mark">i</span><p><b>Where the project stands:</b> the current prototype focuses on ESP32 CSI acquisition and exploratory visualization. Human-presence classification and through-wall performance remain future validation goals.</p></div>
+    </section>
+
+    <section class="system-section section" id="architecture">
+      <div class="section-head"><div><div class="eyebrow">02 / SYSTEM ARCHITECTURE</div><h2>From radio link<br>to <em>readable signals.</em></h2></div><p class="section-summary">The documented workflow connects wireless measurement, CSI acquisition, record parsing and dashboard visualization. Labelled evaluation is the next research stage.</p></div>
+      <div class="architecture">
+        <div class="arch-step"><span class="arch-no">01</span><div class="arch-symbol">⌁</div><h3>Wi-Fi link</h3><p>ESP32-based wireless communication</p><span class="arch-tag">RADIO PROPAGATION</span></div><div class="arch-arrow">→</div>
+        <div class="arch-step"><span class="arch-no">02</span><div class="arch-symbol">▤</div><h3>CSI acquisition</h3><p>Receive and log channel measurements</p><span class="arch-tag">ESP32 HARDWARE</span></div><div class="arch-arrow">→</div>
+        <div class="arch-step"><span class="arch-no">03</span><div class="arch-symbol">⌘</div><h3>Record parsing</h3><p>Validate fields and inspect signal data</p><span class="arch-tag">DATA PIPELINE</span></div><div class="arch-arrow">→</div>
+        <div class="arch-step"><span class="arch-no">04</span><div class="arch-symbol">▥</div><h3>Visualization</h3><p>Explore signal plots and indicators</p><span class="arch-tag">DASHBOARD</span></div>
+      </div>
+      <div class="protocol-panel">
+        <div class="protocol-heading"><div class="eyebrow">WIRELESS CONFIGURATION</div><h3>Protocol &amp; frequency.</h3><p>What can be stated from the supplied capture log — and what still needs firmware-level confirmation.</p></div>
+        <div class="protocol-facts">
+          <div><span>WIRELESS TECHNOLOGY</span><b>Wi-Fi / IEEE 802.11 family</b><small>CSI is derived from the wireless channel estimate.</small></div>
+          <div><span>OBSERVED CHANNEL FIELD</span><b>Channel-related value: 11</b><small>Consistent across the inspected 16,660 records.</small></div>
+          <div><span>FREQUENCY CONTEXT</span><b>2.4 GHz band*</b><small>Channel 11 corresponds to 2462 MHz where standard 2.4 GHz Wi-Fi channel numbering applies.</small></div>
+          <div><span>CAPTURE FORMAT</span><b>CSI_DATA · 256 integers</b><small>25 parsed fields per record; the 256 entries are not assumed to be 256 active OFDM subcarriers.</small></div>
+        </div>
+        <div class="protocol-caveat"><b>Configuration note:</b> the report does not establish the exact 802.11 PHY mode, channel bandwidth, packet-generation/transport protocol (for example, ESP-NOW), or the firmware mapping of the 256-value array. These must be verified from the flashed firmware and device configuration before claiming them as confirmed settings. *The 2462 MHz interpretation is conditional on field 11 being the standard 2.4 GHz Wi-Fi channel number.</div>
+      </div>
+      <div class="future-stage"><span class="future-badge">NEXT STAGE</span><div><b>Labelled, environment-wise evaluation</b><p>Controlled presence / absence recordings, verified CSI interpretation and testing on held-out environments.</p></div><span class="future-arrow">↗</span></div>
+      <div class="hardware-gallery"><div class="gallery-title"><div class="eyebrow">THE PROTOTYPE</div><h3>Hardware in the loop.</h3></div><figure class="wide-photo"><img src="assets/hardware-overview.png" alt="ESP32 CSI hardware, laptop dashboard and power bank setup" loading="lazy"><figcaption><span>01 — HARDWARE OVERVIEW</span><span>ESP32 · USB · LAPTOP</span></figcaption></figure><figure><img src="assets/esp32-boards.png" alt="ESP32 development boards used in the prototype" loading="lazy"><figcaption><span>02 — DEVELOPMENT BOARDS</span></figcaption></figure><figure><img src="assets/prototype-setup.png" alt="Prototype setup with ESP32 boards and laptop dashboard" loading="lazy"><figcaption><span>03 — PROTOTYPE ARRANGEMENT</span></figcaption></figure></div>
+    </section>
+
+    <section class="signals-section section" id="maths">
+      <div class="section-head"><div><div class="eyebrow">03 / MATHEMATICAL MODEL</div><h2>From complex samples<br>to <em>channel features.</em></h2></div><p class="section-summary">These equations explain the signal model and candidate features. The report does not claim that all of these transformations have already been applied to the supplied raw array.</p></div>
+      <div class="math-grid">
+        <article class="math-card"><span class="math-no">01 / COMPLEX CSI</span><div class="equation">H<sub>k</sub>(t) = I<sub>k</sub>(t) + jQ<sub>k</sub>(t)</div><p>A channel estimate can be represented by in-phase (I) and quadrature (Q) components for subcarrier k at time t.</p><span class="math-status">SIGNAL REPRESENTATION</span></article>
+        <article class="math-card"><span class="math-no">02 / AMPLITUDE</span><div class="equation">A<sub>k</sub>(t) = √(I<sub>k</sub><sup>2</sup> + Q<sub>k</sub><sup>2</sup>)</div><p>Amplitude describes the magnitude of the complex channel measurement. It can be tracked across time and subcarriers.</p><span class="math-status">DERIVED FEATURE</span></article>
+        <article class="math-card"><span class="math-no">03 / PHASE</span><div class="equation">φ<sub>k</sub>(t) = atan2(Q<sub>k</sub>, I<sub>k</sub>)</div><p>Phase describes the angle of the complex measurement. Hardware offsets and phase reliability require careful handling.</p><span class="math-status">DERIVED FEATURE</span></article>
+        <article class="math-card"><span class="math-no">04 / BASELINE REFERENCE</span><div class="equation">D<sub>k</sub>(t) = A<sub>k</sub>(t) − B<sub>k</sub></div><p>B<sub>k</sub> is the mean amplitude from an N-sample reference window. The difference highlights deviations from a recorded baseline.</p><span class="math-status">PROPOSED PREPROCESSING</span></article>
+        <article class="math-card"><span class="math-no">05 / WINDOW MEAN</span><div class="equation">μ<sub>k</sub> = (1/T) Σ A<sub>k</sub>(t)</div><p>Mean amplitude over T samples provides a compact summary of a subcarrier's signal level within a window.</p><span class="math-status">CANDIDATE FEATURE</span></article>
+        <article class="math-card"><span class="math-no">06 / WINDOW VARIANCE</span><div class="equation">σ<sub>k</sub><sup>2</sup> = (1/T) Σ (A<sub>k</sub>(t) − μ<sub>k</sub>)²</div><p>Variance measures how much amplitude fluctuates within the window. It may help distinguish stable and changing channel conditions.</p><span class="math-status">CANDIDATE FEATURE</span></article>
+      </div>
+      <div class="math-footnote"><b>Important implementation condition:</b> I/Q amplitude and phase calculations are valid only after confirming how the ESP32 firmware encodes the raw CSI array. The 256 integers in the log must not be treated as I/Q pairs or physical subcarriers without verifying that mapping. Baseline and window statistics are proposed processing steps, not claimed measured model outputs.</div>
+    </section>
+
+    <section class="evidence-section section" id="results">
+      <div class="section-head"><div><div class="eyebrow">04 / DATA & EVIDENCE</div><h2>What the data<br><em>actually shows.</em></h2></div><p class="section-summary">The supplied capture log was parsed and checked for structure. These are measured properties of the available file — not evidence of a trained detector or an accuracy score.</p></div>
+      <div class="stats-grid"><div class="stat"><span class="stat-label">CSI RECORDS PARSED</span><strong data-count="16660">16,660</strong><span class="stat-note">CSI_DATA records in supplied log</span></div><div class="stat"><span class="stat-label">FIELDS / RECORD</span><strong data-count="25">25</strong><span class="stat-note">Consistent parsed layout</span></div><div class="stat"><span class="stat-label">MEAN RSSI</span><strong>−42.45</strong><span class="stat-note">dBm · approximately</span></div><div class="stat"><span class="stat-label">RSSI RANGE</span><strong>44 <small>dB</small></strong><span class="stat-note">−73 to −29 dBm</span></div></div>
+      <div class="evidence-table-wrap"><div class="table-heading"><h3>Inspected log characteristics</h3><span>DATA SUMMARY</span></div><table><tbody><tr><th>Record marker</th><td>CSI_DATA</td><td class="verified">Observed</td></tr><tr><th>Examined channel-related field</th><td>11 throughout inspected log</td><td class="verified">Observed</td></tr><tr><th>Reported CSI-length field</th><td>256 throughout inspected log</td><td class="verified">Observed</td></tr><tr><th>Integer entries in final field</th><td>256 per inspected record</td><td class="verified">Observed</td></tr><tr><th>Array parsing errors</th><td>0 in inspected records</td><td class="verified">Observed</td></tr></tbody></table></div>
+      <div class="limits-grid"><div class="limits-title"><div class="eyebrow">SCIENTIFIC HONESTY</div><h3>What we can say.<br><em>What we cannot yet say.</em></h3></div><div class="limit-col"><span class="limit-symbol">✓</span><h4>Supported by current materials</h4><ul><li>A structured log of 16,660 CSI-marked records exists.</li><li>Its inspected records have a consistent 25-field layout.</li><li>RSSI and selected CSI-related fields can be summarized.</li><li>A dashboard interface is available for exploratory visualization.</li></ul></div><div class="limit-col not-yet"><span class="limit-symbol">—</span><h4>Not established yet</h4><ul><li>Classification accuracy, precision, recall or F1-score.</li><li>Reliable detection of stationary people.</li><li>Generalization across rooms or wall materials.</li><li>Validated through-wall sensing or localization.</li></ul></div></div>
+    </section>
+
+    <section class="documents-section section" id="documents"><div class="section-head"><div><div class="eyebrow">05 / PROJECT LIBRARY</div><h2>Read the <em>work.</em></h2></div><p class="section-summary">The project presentation, research paper and full report are included with this website repository. Open them directly in your browser or download a copy.</p></div><div class="documents-grid"><article class="document-card"><div class="doc-type">01 / PRESENTATION</div><div class="doc-icon">▤</div><h3>Project pitch deck</h3><p>Presentation slides for the Project Vedhak prototype.</p><div class="doc-actions"><a href="docs/presentation.pptx" target="_blank" rel="noopener">Open presentation ↗</a><a href="docs/presentation.pptx" download>Download ↓</a></div></article><article class="document-card featured-doc"><div class="doc-type">02 / RESEARCH PAPER</div><div class="doc-icon">⌑</div><h3>ESP32 Wi-Fi CSI Acquisition</h3><p>Acquisition and exploratory signal visualization for human presence sensing.</p><div class="doc-actions"><a href="docs/research-paper.pdf" target="_blank" rel="noopener">Open paper ↗</a><a href="docs/research-paper.pdf" download>Download ↓</a></div></article><article class="document-card"><div class="doc-type">03 / PROJECT REPORT</div><div class="doc-icon">▧</div><h3>IoT subject report</h3><p>System architecture, hardware, data inspection, results and validation plan.</p><div class="doc-actions"><a href="docs/project-report.pdf" target="_blank" rel="noopener">Open report ↗</a><a href="docs/project-report.pdf" download>Download ↓</a></div></article></div></section>
+
+    <section class="team-section section"><div class="eyebrow">THE PEOPLE BEHIND THE PROJECT</div><h2>Built through <em>collaboration.</em></h2><div class="team-grid"><div class="team-member"><span>01</span><h3>U. Hari Charan</h3><p>Presenting author</p></div><div class="team-member"><span>02</span><h3>Panav Payappagoudar</h3><p>Co-author</p></div><div class="team-member"><span>03</span><h3>S. Zigneswar</h3><p>Co-author</p></div></div><div class="institution">SCHOOL OF COMPUTER SCIENCE AND ENGINEERING (SCOPE)<br><b>VIT-AP UNIVERSITY · ANDHRA PRADESH, INDIA</b></div></section>
+  </main>
+  <footer><a class="brand" href="#home"><span class="brand-mark">V</span><span>PROJECT <b>VEDHAK</b></span></a><span>ESP32 WI-FI CSI · EXPLORATORY RESEARCH</span><a href="#home">BACK TO TOP ↑</a></footer>
+  <div class="presentation-hint" id="presentationHint">PRESENTATION MODE · Press P to exit · ← → to navigate sections</div>
+  <script src="script.js"></script>
+</body>
+</html>
